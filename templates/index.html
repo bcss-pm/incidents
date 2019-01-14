@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta charset = "UTF-8">
+	{%- block head -%}{%- include 'head.html' -%}{%- endblock -%}
+	<body>
+		<div id="wrapper">
+			{%- block nav -%}{%- include 'nav.html' -%}{%- endblock -%}
+			<div class="container">
+				{%- block body -%}
+					{%- if posts -%}
+						{%- for post in posts -%}
+							<div class="post clearfix">
+								<div class="row">
+									<div class="col-lg-8">
+
+										<!-- Header Field For Incident Entry -->
+										<div class="page-header">
+											<h3><a href="{{ url_for('single_post',
+                          permalink=post['permalink']) }}">{{ post['incident_title'] | safe }}</a></h3>
+											<p><span class="icon-time">&nbsp;</span>
+                      {%- if post['incident_time_initial_compromise'] -%}
+                        Date Of Initial Compromise: {{ post['incident_time_initial_compromise'] | formatdate }}
+                      {%- else -%}
+                        Date Of Initial Compromise: None
+                      {%- endif -%}
+                      </p>
+											<p><span class="icon-btc">&nbsp;</span>
+											{%- if post['loss_crypto'] -%}
+												Value Loss (Crypto): {{ post['loss_crypto'] }}
+											{%- else -%}
+												Value Loss (Crypto): 0 
+											{%- endif -%}
+                      </p>
+											<p><span class="icon-usd">&nbsp;</span>
+											{%- if post['loss_usd'] -%}
+												Value Loss (USD): {{ post['loss_usd'] }}
+											{%- else -%}
+												Value Loss (USD): 0
+											{%- endif -%}
+                      &nbsp;
+                      </p>
+										</div>
+
+										<div class="content no-lightbox">
+											{%- if post['incident_preview'] -%}
+												{{ post['incident_preview'] | markdown }}
+											{%- endif -%}
+											<a href="{{ url_for('single_post', permalink=post['permalink']) }}">More Details ... </a>
+										</div>
+										</br>
+										<p>
+											{%- if post['date'] -%}
+											<em>Date Of Creation: {{ post['date'] | formatdate }}</em>
+											{%- else -%}
+											<em>Date Of Creation: Unknown</em>
+											{%- endif -%}
+										</p>
+									</div>
+								</div>
+							</div>
+						{%- endfor -%}
+					{% else %}
+						<div class="post clearfix">
+							<div class="row">
+								<div class="col-lg-8">
+									<div class="page-header">
+										<h1>Posts not found..</h1>
+									</div>
+								</div>
+							</div>
+						</div>
+					{%- endif -%}
+				
+					<!-- Sidebar, customize sidebar.html to liking -->
+					{%- include 'sidebar.html' -%}
+
+				{%- endblock -%}
+				{% if pagination and pagination.pages > 1 %}
+					<div class="pagination-wrap">
+						<ul class="pagination">
+						  {% for page in pagination.iter_pages() %}
+						    {% if page %}
+						        <li {% if page == pagination.page %}class="active"{% endif %}><a href="{{ url_for_other_page(page) }}">{{ page }}</a></li>
+						    {% else %}
+						      <li><span class=ellipsis>…</span></li>
+						    {% endif %}
+						  {% endfor %}
+						  {% if pagination.has_next %}
+						    <li><a href="{{ url_for_other_page(pagination.page + 1)
+						      }}">&raquo;</a></li>
+						  {% endif %}
+						</ul>
+					</div>
+				{% endif %}
+			</div>
+		</div>
+		{%- include 'footer.html' -%}
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+	</body>
+</html>

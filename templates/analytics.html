@@ -1,0 +1,175 @@
+{%- extends 'index.html' -%}
+{%- block body -%}
+		<div class="post clearfix">
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="page-header">
+            <h1>Analytics</h1>
+          </div>
+
+          <div class="content">
+            <h2>USD Loss vs Incident Reported Date</h2>
+            <!-- TODO make this responsive -->
+            <svg class="line_chart" id="usd_vs_time"></svg>
+          </div>
+          
+        </div>
+      </div>
+		</div>
+
+    <script>
+    $(function() {
+      // console.log("jquery is working");
+      incidentReported_vs_usdLoss();
+    });
+    
+    /*
+     * Graph of incident reported vs usd loss
+     */
+    function incidentReported_vs_usdLoss() {
+      // STEP 1
+      // parse data from flask
+      var root = JSON.parse({{ post | tojson | safe }});
+
+      // console.log(root);
+      
+      // convert root into an array
+      // we only want incident_reported and loss_usd
+      // add incident_title incase we want to add bubbles in future
+      var arr = [];
+
+      for (var i in root) {
+        if(root[i]['incident_reported']) {
+          raw_value = Math.floor(+root[i]['loss_usd']);
+          console.log(raw_value);
+          arr.push(
+            {
+              title: root[i]['incident_title'], // KIV
+              date: new Date(root[i]['incident_reported']),
+              //raw_value: +root[i]['loss_usd'],
+              value = raw_value.toLocaleString(),
+            }
+          );
+        }
+      }
+
+      // sanity check
+      // console.log(arr);
+
+      // STEP 2
+      // draw chart base on data
+
+      // Configurations
+      var svgWidth = 1200, svgHeight = 640;
+      var margin = {top: 20, right: 280, bottom: 30, left: 80};
+      var width = svgWidth - margin.left - margin.right;
+      var height = svgHeight - margin.top - margin.bottom;
+
+      // Declare svg object
+      var svg = d3.select("#usd_vs_time");
+
+      // add attributes to svg object
+      svg.attr("width", svgWidth)
+         .attr("height", svgHeight);
+
+
+      // create group element to hold data
+      // line chart, axis, and labels
+      var g = svg.append("g")
+        .attr("transform", 
+              "translate(" + margin.left + "," + margin.top + ")"
+        )
+        .style("pointer-events", "all");
+
+      // add scales
+      var x = d3.scaleTime().rangeRound([0, width]);
+      var y = d3.scaleLinear().rangeRound([height, 0]);
+      
+      // add line 
+      var line = d3.line()
+        .x(function(d) { return x(d.date) })
+        .y(function(d) { return y(d.value) })
+        x.domain(d3.extent(arr, function(d) { return d.date }));
+        y.domain(d3.extent(arr, function(d) { return d.value }));
+
+      // add points
+      var points = svg.selectAll(".dot")
+        .data(arr)
+        .enter().append("svg:circle")
+          .attr("class", "dot")
+          .attr("stroke", "grey")
+          .attr("fill", function(d, i) { return "#F12" })
+          .attr("cx", function(d, i) { return x(d.date) + margin.left })
+          .attr("cy", function(d, i) { return y(d.value) + margin.top })
+          .attr("r", function(d, i) { return 4.5 });
+      
+      // add text
+      var text = svg.selectAll("text")
+        .data(arr)
+        .enter()
+        .append("text")
+        .style("pointer-events", "all");
+
+      // add svg text element attributes
+      var textLabels = text
+        .attr("x", function(d) { return x(d.date) + margin.left })
+        .attr("y", function(d) { return y(d.value) + margin.top  })
+        .text( function(d) { return d.title })
+        .attr("font-family", "sans-serif")
+        .attr("font-size", "14px")
+        .attr("fill", "#333")
+        .style("visibility", "hidden")
+        .on("mouseover", function() { 
+          return d3.select(this).style("visibility", "visible");
+        })
+				.on("mousemove", function(d) {
+					return d3.select(this).style(
+						"top", 
+						(d3.event.pageY - 30) + "px")
+						.style("left", (d3.event.pageX + 30) + "px");})
+				.on("mouseout", function() {
+					return d3.select(this).style("visibility", "hidden");
+				});
+
+      // append axes
+      // handle x axis
+      g.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(d3.axisBottom(x))
+        .select(".domain")
+        .remove();
+
+      // handle y axis
+      g.append("g")
+        .call(d3.axisLeft(y))
+        .attr("class", "y axis")
+        .append("text")
+        .attr("fill", "#000")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 6)
+        .attr("dy", "0.71em")
+        .attr("text-anchor", "end")
+        .text("USD Loss");
+      
+
+      // Append the path
+      g.append("path")
+        .datum(arr)
+        .attr("fill", "none")
+        .attr("stroke", "steelblue")
+        .attr("stroke-linejoin", "round")
+        .attr("stroke-linecap", "round")
+        .attr("stroke-width", 1.5)
+        .attr("d", line);
+      
+
+    }
+    </script>
+    <style>
+    .line_chart
+    {
+        border: 1px solid lightgray;
+    }
+    </style>
+{%- endblock -%}

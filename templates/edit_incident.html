@@ -1,0 +1,352 @@
+{%- extends 'index.html' -%}
+{%- block body -%}
+	{% if session.get('post-preview', None) %}
+		{% set incident_title = session['post-preview'].get('incident_title', None) %}
+		{% set incident_description = session['post-preview'].get('incident_description', None) %}
+	{% else %}
+		{% set incident_title = post.get('incident_title') %}
+		{% set incident_description = post.get('incident_description') %}
+		{% set ttp_resources_infrastructure = post.get('ttp_resources_infrastructure') %}
+		{% set incident_categories = post.get('incident_categories') %}
+		{% set victim_targetting = post.get('victim_targetting') %}
+		{% set attack_pattern_type_capec_id = post.get('attack_pattern_type_capec_id') %}
+		{% set attack_pattern_type = post.get('attack_pattern_type') %}
+		{% set exploit_targets = post.get('exploit_targets') %}
+		{% set initial_compromise = post.get('initial_compromise') %}
+		{% set incident_reported = post.get('incident_reported') %}
+		{% set loss_crypto = post.get('loss_crypto') %}
+		{% set loss_usd = post.get('loss_usd') %}
+		{% set description_geographical = post.get('description_geographical') %}
+		{% set references = post.get('references') %}
+		{% set advanced = post.get('advanced') %}
+	{% endif %}
+	<div class="post clearfix">
+		<div class="row">
+			<div class="col-lg-8">
+				<div class="page-header">
+					<h1>Edit Incident</h1>
+				</div>
+				<div class="content">
+					{%- with messages = get_flashed_messages(with_categories=True) -%}
+						{%- if messages -%}
+							{%- for category, message in messages -%}
+								<div class="response">
+									<span class="message {{ category }}">{%- if category == 'success' -%}✔{%- endif -%}&nbsp;{{ message }}</span>
+								</div>
+							{%- endfor -%}
+						{%- endif -%}
+					{%- endwith -%}
+
+					<form id="post-form" role="form" method="post" action="{{ url_for('new_post') }}">
+						
+            <!-- TODO TOOLTIPS -->
+						<h3>Essential STIX Fields</h3>
+						<br>
+						
+						<!-- Incident -> Title -->
+						<div class="form-group {% if error and error_type == 'validate' %} has-error{% endif %}">
+							{%- if error and error_type == 'validate' -%}
+								<label class="control-label" for="incident-title">Required field</label>
+								<br>
+							{%- endif -%}
+								<label>Incident -> Title</label>
+								&nbsp;
+								<span class="glyphicon glyphicon-question-sign" 
+									data-toggle="popover" 
+									data-placement="right" 
+									data-content="Incident title placement">
+								</span>
+						    <input type="text" class="form-control" name="incident_title" id="incident_title" placeholder="Title" value="{{ incident_title | safe }}" required>
+						</div>
+
+
+						<!-- Incident -> Description -->
+						<div class="form-group {% if error and error_type == 'validate' %} has-error{% endif %}">
+							{%- if error and error_type == 'validate' -%}
+								<label class="control-label" for="incident-description">Required field</label>
+								<br>
+							{%- endif -%}
+								<label>Incident -> Description</label>
+								&nbsp;
+								<span class="glyphicon glyphicon-question-sign" 
+									data-toggle="popover" 
+									data-placement="right" 
+									data-content="A well described incident is written in narrative form beginning with an overview of the incident before going into how the incident occured">
+								</span>
+						    <textarea id="incident_description" name="incident_description" class="form-control" rows="7" placeholder="Description" required>{{ incident_description | safe }}</textarea>
+						</div>
+
+
+						<!-- Incident -> Categories -->
+						<div class="form-group">
+							<label>Incident -> Categories</label>
+							&nbsp;
+							<span class="glyphicon glyphicon-question-sign" 
+                data-toggle="popover" 
+                data-placement="right" 
+								data-html="true"
+								data-content="
+								Indicate Source of Vulnerability </br></br>
+								<strong>Opsec</strong>: Vulnerabilities which did not originate from blockchain</br> 
+								<strong>Smart Contracts</strong>: Vulnerabilities related to smart contracts</br> 
+								<strong>Protocols and Incentives</strong>: Vulnerabilities related the protocols and incentives">
+              </span>
+							<input type="text" list="list_categories" id="incident_categories" name="incident_categories" placeholder="Categories" class="form-control" value="{{ incident_categories | safe }}">
+							
+							<datalist id="list_categories" name="incident_categories">
+								<option value="Opsec">Opsec : Vulnerabilities not originating from blockchain</option>
+								<option value="Smart Contract">Smart Contract : Smart Contract Vulnerabilities</option>
+								<option value="Protocol and Incentives">Protocol and Incentives : Vulnerability from Protocol and Incentives</option>
+								<!-- TODO ADD MORE FORM DETAILS FROM GOOGLE DOCS -->
+							</datalist>
+						</div>
+
+						<div class="form-group">
+							<label>TTP -> Victim Targetting</label>
+							&nbsp;
+							<span class="glyphicon glyphicon-question-sign" 
+                data-toggle="popover" 
+                data-placement="right" 
+                data-content="The Victim_Targeting field characterizes the people, organizations, information or access being targeted.">
+              </span>
+							<input type="text" name="victim_targetting"
+              id="victim_targetting" placeholder="eg. Bitcoin, Ethereum, Litecoin" class="form-control" value="{{ victim_targetting | safe }}"/>
+						</div>
+
+						<div class="form-group">
+              <label>TTP -> Attack Pattern Type -> @capec_id</label>
+							&nbsp;
+							<span class="glyphicon glyphicon-question-sign" 
+                data-toggle="popover" 
+                data-placement="right" 
+                data-content= "">
+              </span>
+							<input type="text" 
+                name="attack_pattern_type_capec_id" 
+                id="attack_pattern_type_capec_id"
+                placeholder="List of attack patterns taken from research papers describing smart contract and protocol & incentive attacks"
+                class="form-control" value="{{ attack_pattern_type_capec_id | safe }}"/>
+						</div>
+
+						<div class="form-group">
+              <label>TTP -> Attack Pattern Type </label>
+							&nbsp;
+							<span class="glyphicon glyphicon-question-sign" 
+                data-toggle="popover" 
+                data-placement="right" 
+                data-content= "Captures prose information about an individual
+                attack pattern as well as a CAPEC reference. In addition to
+                capturing basic information, this type is intended to be
+                extended to enable the structured description of an attack
+                pattern instance using the XML Schema extension feature. The
+                STIX default extension uses the Common Attack Pattern
+                Enumeration and Classification (CAPEC) schema to do so. The
+                extension that defines this is captured in the
+                CAPEC2.7InstanceType in the
+                http://stix.mitre.org/extensions/AP#CAPEC2.7-1 namespace. This
+                type is defined in the
+                extensions/attack_pattern/capec_2.7_attack_pattern.xsd file or
+                at the URL
+                http://stix.mitre.org/XMLSchema/extensions/attack_pattern/capec_2.7/1.0.1/capec_2.7_attack_pattern.xsd.">
+              </span>
+							<input type="text" 
+                name="attack_pattern_type_capec_id" 
+                id="attack_pattern_type_capec_id"
+                placeholder="List of attack patterns taken from research papers describing smart contract and protocol & incentive attacks"
+                class="form-control" value="{{ attack_pattern_type_capec_id | safe }}"/>
+						</div>
+
+						<!-- TTP -> Exploits Targets -->
+						<div class="form-group">
+							<label>TTP -> Exploit Targets</label>
+							&nbsp;
+							<span class="glyphicon glyphicon-question-sign" 
+                data-toggle="popover" 
+                data-placement="right" 
+                data-content= "The Exploit_Targets field characterizes potential vulnerability, weakness or configuration targets for exploitation by this TTP.">
+              </span>
+							<input type="text" name="exploit_targets" id="exploit_targets"
+              placeholder="Smart contract and incentive attacks"
+              class="form-control" value="{{ exploit_targets | safe }}"/>
+						</div>
+
+						<!-- Incident -> Time -> Intial_Compromise -->
+						<div class="form-group">
+							<label>Incident -> Time -> Intial_Compromise </label>
+							&nbsp;
+							<span class="glyphicon glyphicon-question-sign" 
+                data-toggle="popover" 
+                data-placement="right" 
+								data-html="true"
+                data-content="
+								Date to be taken from the transaction that the attacked occured from the blockchain.</br>
+								<strong>Use date format: YYYYMMDD</strong>
+								"></span>
+							<input type="text" 
+								name="initial_compromise" 
+								id="initial_compromise" 
+								placeholder="Date" 
+								class="form-control"
+								value="{{ initial_compromise | safe }}"/>
+
+						</div>
+
+						<!-- Incident -> Time -> Incident_Reported -->
+						<div class="form-group">
+							<label>Incident -> Time -> Incident_Reported</label>
+							&nbsp;
+							<span class="glyphicon glyphicon-question-sign"
+                data-toggle="popover" 
+                data-placement="right"
+								data-html="true"
+                data-content="
+								Time it was announced to the public such as when a user seeks help for an attack which is eventually verified to be real or when an organization places a press release.</br>
+								<strong>Use date format: YYYYMMDD</strong>
+								"></span>
+							<input type="text" name="incident_reported"
+								id="incident_reported" 
+								placeholder="Date" 
+								class="form-control"
+								value="{{ incident_reported | safe }}"/>
+						</div>
+
+						<!-- Total_Loss_Estimation -> Actual_Total_Loss_Estimation (Cryptocurrency) -->
+						<div class="form-group">
+							<label>Total_Loss_Estimation -> Actual_Total_Loss_Estimation (Cryptocurrency)</label>
+							&nbsp;
+							<span class="glyphicon glyphicon-question-sign" 
+                data-toggle="popover" 
+                data-placement="right" 
+                data-content="Specifies the actual level of total estimate cryptocurrency loss for incidents. Use numerical values eg. 100 BTC">
+              </span>
+							<input type="text" 
+                name="loss_crypto" 
+                id="loss_crypto" 
+                placeholder="Indicate as eg. 100 BTC" 
+                class="form-control" 
+                value="{{ loss_crypto | safe }}"/>
+						</div>
+
+						<!-- Total_Loss_Estimation -> Actual_Total_Loss_Estimation (USD) -->
+						<div class="form-group">
+							<label>Total_Loss_Estimation -> Actual_Total_Loss_Estimation (USD)</label>
+							&nbsp;
+							<span class="glyphicon glyphicon-question-sign" 
+                data-toggle="popover" 
+                data-placement="right" 
+                data-content="Total Loss Estimation of USD losses. Use numerical values eg. 100 USD">
+              </span>
+							<input type="text" 
+                name="loss_usd" 
+                id="loss_usd" 
+                placeholder="Indicate as eg. 100 USD" 
+                class="form-control" 
+                value="{{ loss_usd | safe }}"/>
+						</div>
+
+						<!-- Attributed_Threat_Actors -> Threat_Actor_type -> Description (Geographical) -->
+						<!-- TODO -->
+						<div class="form-group">
+							<label>Attributed_Threat_Actors -> Threat_Actor_type -> Description (Geographical)</label>
+							&nbsp;
+							<span class="glyphicon glyphicon-question-sign" 
+                data-toggle="popover" 
+                data-placement="right" 
+                data-content="Trace through IP addresses if possible. Use ISO 3166 for country code. (To be more specific theres, English short name, Alpha-2 code, Alpha-3 code">
+              </span>
+							<input type="text" 
+                name="description_geographical" 
+                id="description_geographical" 
+                placeholder="Geographical origin of attack, eg. ???" 
+                class="form-control" 
+                value="{{ description_geographical | safe }}"/> 
+						</div>
+
+						<!-- References -->
+						<!-- TODO include file storage -->
+						<div class="form-group">
+							<label>References</label>
+							&nbsp;
+							<span class="glyphicon glyphicon-question-sign" 
+                data-toggle="popover" 
+                data-placement="right" 
+								data-html="true"
+								data-content="
+								Short description of how the source is used including the link.</br>
+								Include URL, Files (pdf, doc, docx, txt, etc.)
+								">
+							</span>
+							<input type="text" name="references" id="references" placeholder="References" class="form-control" value="{{ references | safe }}"/>
+						</div>
+
+						<br>
+						<hr>
+
+						<!-- TODO fix the collapse -->
+						<!-- <h3>Detailed Stix Fields
+							<span class="icon-caret-down" id="collapse-btn"></span>
+						</h3>
+						<div class="form-group collapse in" id="json-input">
+								<label>JSON Input</label>
+								&nbsp;
+								<span class="glyphicon glyphicon-question-sign" 
+									data-toggle="popover" 
+									data-placement="right" 
+									data-content="JSON input of form field for other advanced STIX fields. TBC">
+								</span>
+								<textarea id="advanced" name="advanced" class="form-control" rows="7" placeholder="JSON input">{{ advanced | safe }}</textarea>
+						</div> -->
+
+						<br>
+						<hr>
+
+						<!-- Save -->
+						<div class="form-group">
+							<input type="hidden" name="post-preview" id="preview">
+              <!-- post id to tell flask that we are editing an incident -->
+              <input type="hidden" 
+                name="post-id" 
+                id="post-id" 
+                value="{{ post['_id'] }}" />
+							<!-- CSRF token -->
+							<input name="_csrf_token" type="hidden" value="{{ csrf_token() }}">
+							<input id="post-submit" type="submit" class="btn btn-primary" value="Save">
+							<!-- incident preview TODO -->
+							<!-- <input id="post-preview" type="submit" class="btn" value="Preview">-->
+						</div>
+
+						<!-- Save and Return -->
+						<div class="form-group">
+							<input type="hidden" name="post-preview" id="preview">
+              <!-- post id to tell flask that we are editing an incident -->
+              <input type="hidden" 
+                name="post-id" 
+                id="post-id" 
+                value="{{ post['_id'] }}" />
+							<!-- CSRF token -->
+							<input name="_csrf_token" type="hidden" value="{{ csrf_token() }}">
+							<input id="post-submit" type="submit" class="btn btn-primary" value="Save and Return">
+							<!-- incident preview TODO -->
+							<!-- <input id="post-preview" type="submit" class="btn" value="Preview">-->
+						</div>
+
+						<!-- Submit -->
+						<div class="form-group">
+							<input type="hidden" name="post-preview" id="preview">
+              <!-- post id to tell flask that we are editing an incident -->
+<!--
+              <input type="hidden" 
+                name="post-id" 
+                id="post-id" 
+                value="{{ post['_id'] }}" />
+							<input name="_csrf_token" type="hidden" value="{{ csrf_token() }}">
+							<input id="post-submit" type="submit" class="btn btn-primary" value="Submit">
+						</div>
+-->
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+  <script src="{{ url_for('static', filename='js/popover.js') }}"></script>
+{%- endblock -%}

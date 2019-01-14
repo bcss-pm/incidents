@@ -1,0 +1,16 @@
+web:
+  build: .
+  command: gunicorn -b :5000 web:app
+  ports:
+    - "5000:5000"
+  volumes:
+    - .:/app
+  links:
+    - db
+
+db:
+  image: mongo:3.6.1
+  environment:
+    - MONGO_INITDB_ROOT_USERNAME=tnoadmin
+    - MONGO_INITDB_ROOT_PASSWORD=tnoadmin123
+  restart: on-failure

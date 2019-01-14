@@ -1,0 +1,72 @@
+{%- extends 'index.html' -%}
+{%- block body -%}
+  <div class="post clearfix">
+    <div class="row">
+      <div class="col-lg-8">
+        <div class="page-header">
+          <h1>Settings</h1>
+        </div>
+        <div class="content">
+        {%- with messages = get_flashed_messages(with_categories=True) -%}
+          {%- if messages -%}
+            {%- for category, message in messages -%}
+              <div class="response">
+                <span class="message {{ category }}">{%- if category == 'success' -%}✔{%- endif -%}&nbsp;{{ message }}</span>
+              </div>
+            {%- endfor -%}
+          {%- endif -%}
+        {%- endwith -%}
+
+          <form role="form" method="post" enctype="multipart/form-data" action="{{ url_for('blog_settings') }}">
+            <div class="form-group {% if error and error_type == 'validate' %}has-error{% endif %}">
+            {%- if error and error_type == 'validate' -%}
+              <label class="control-label" for="blog-title">Required field</label>
+            {%- else -%}
+              <label class="control-label" for="blog-title">Site title</label>
+            {%- endif -%}
+
+              <input type="text" class="form-control" name="blog-title" id="blog-title" placeholder="Blog Title" value="{{ default_settings['BLOG_TITLE'] }}" required autocomplete="off">
+             </div>
+
+             <div class="form-group">
+              <label class="control-label" for="blog-description">Site description</label>
+              <input type="text" class="form-control" name="blog-description" id="blog-description" placeholder="Blog Description" value="{{ default_settings['BLOG_DESCRIPTION'] }}" autocomplete="off">
+             </div>
+
+             <div class="form-group {% if error and error_type == 'validate' %}has-error{% endif %}">
+             {%- if error and error_type == 'validate' -%}
+               <label class="control-label" for="blog-perpage">Required field</label>
+             {%- else -%}
+               <label class="control-label" for="blog-perpage">Posts per page</label>
+             {%- endif -%}
+                <input type="number" min="1" class="form-control" name="blog-perpage" id="blog-perpage" placeholder="Posts per page" value="{{ default_settings['PER_PAGE'] }}" required autocomplete="off">
+             </div>
+
+             <div class="checkbox">
+               <label>
+               <input type="checkbox" name="blog-text-search" disabled> Use <abbr title="MongoDB version 2.4.6 with textSearchEnabled=true required. Otherwise $regex search will be used."> Text Search</abbr>
+               </label>
+             </div>
+
+             <br> 
+
+             <!-- Bulk Incident Upload -->
+             <h1>Mass Incident Upload</h1>
+             <!--  This is outdated S3 doesn't work on my side I cannot upload
+             <p>Download template <a href="https://s3-ap-southeast-1.amazonaws.com/incident-database/public/template.csv">here</a>. Note this will overwrite the current database</p>
+             -->
+             <div class="form-group">
+               <label class="control-label" for="blog-description">Upload .csv file</label>
+               <input type="file" name="file-upload" id="file-upload" value="" />
+             </div>
+
+             <div class="form-group">
+               <input name="_csrf_token" type="hidden" value="{{ csrf_token() }}">
+               <input type="submit" class="btn btn-primary" value="Update">
+             </div>
+          </form>
+        </div>
+      </div> 
+    </div> 
+  </div>
+{%- endblock -%}

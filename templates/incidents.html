@@ -1,0 +1,131 @@
+{%- extends 'index.html' -%}
+{%- block body -%}
+	<div class="post">
+		<div class="row">
+			<div class="col-lg-12">
+				{%- if posts -%}
+					<div class="page-header">
+						<h1>Incidents</h1>
+					</div>
+					<div class="content">
+						{%- with messages = get_flashed_messages(with_categories=True) -%}
+		                    {%- if messages -%}
+		                        {%- for category, message in messages -%}
+		                            <div class="response">
+		                                <span class="message {{ category }}">{%- if category == 'success' -%}✔{%- endif -%}&nbsp;{{ message }}</span>
+		                            </div>
+		                        {%- endfor -%}
+		                    {%- endif -%}
+		                {%- endwith -%}
+						<a href="{{ url_for('new_post') }}" class="response btn btn-primary">Add new</a>
+
+						<table class="table table-striped">
+							<tr>
+                <!-- to change to human readable numbers
+                <th>ID</th>
+                -->
+								<th>Title
+                  <a title="title_ascending" 
+                    href="{{ url_for('posts_title_ascending') }}" 
+                    class="icon-caret-up bigger icon">
+                  </a>
+
+                  <a title="title_descending" 
+                    href="{{ url_for('posts_title_descending') }}" 
+                    class="icon-caret-down bigger icon">
+                  </a>
+                  &nbsp;
+                </th>
+				<th>Date Created</th>
+                <th>Date Reported
+                  <a title="date_reported_ascending" 
+                    href="{{ url_for('posts_date_reported_ascending') }}" 
+                    class="icon-caret-up bigger icon">
+                  </a>
+
+                  <a title="date_reported_descending" 
+                    href="{{ url_for('posts_date_reported_descending') }}" 
+                    class="icon-caret-down bigger icon">
+                  </a>
+                  &nbsp;
+                </th>
+                <th>Loss (USD)
+                  <a title="usd_ascending" 
+                    href="{{ url_for('posts_usd_ascending') }}" 
+                    class="icon-caret-up bigger icon">
+                  </a>
+
+                  <a title="usd_descending" 
+                    href="{{ url_for('posts_usd_descending') }}" 
+                    class="icon-caret-down bigger icon">
+                  </a>
+                </th>
+								<th>Category
+                  <a title="category_ascending" 
+                    href="{{ url_for('posts_category_ascending') }}" 
+                    class="icon-caret-up bigger icon">
+                  </a>
+
+                  <a title="category_descending" 
+                    href="{{ url_for('posts_category_descending') }}" 
+                    class="icon-caret-down bigger icon">
+                  </a>
+                  &nbsp;
+                </th>
+								<th>Action</th>
+							</tr>
+							{%- for post in posts -%}
+							<tr>
+                <!-- to change to human readable numbers
+                <td>{{ post['id'] }}</td>
+                -->
+								<td><a title="Preview" href="{{ url_for('single_post',
+                    permalink=post['permalink']) }}" data-target="_blank">{{
+                    post['incident_title'] | safe }}</a></td>
+
+								<td>{{ post['date'] |formatdate }}</td>
+
+                {%- if post['incident_reported'] -%}
+                  <td>{{ post['incident_reported'] | formatdate }}</td>
+                {%- else -%}
+                  <td>None</td>
+                {%- endif -%}
+
+                {%- if post['loss_usd'] or post['loss_usd'] == 0 -%}
+                  <td>{{ post['loss_usd'] }}</td>
+                {%- else -%}
+                  <td>0</td>
+                {%- endif -%}
+
+                {%- if post['incident_categories'] -%}
+                  <td>{{ post['incident_categories'] }}</td>
+                {%- else -%}
+                  <td>None</td>
+                {%- endif -%}
+
+								<td>
+                  <a title="Edit" 
+                    href="{{ url_for('post_edit', id=post['id']) }}" 
+                    class="icon-edit-sign bigger icon">
+                  </a>
+                  {%- if posts|length > 1 -%}&nbsp;&nbsp;
+                  <a title="Delete" 
+                    href="{{ url_for('post_del', id=post['id']) }}" 
+                    class="icon-remove-sign bigger icon delete">
+                  </a>
+                  {%- endif -%}
+                </td>
+							</tr>
+							{%- endfor -%}
+						</table>
+					</div>
+				{%- else -%}
+					<div class="page-header">
+						<h1>Posts not found..</h1>
+					</div>
+				{%- endif -%}
+
+		    </div>
+		</div>
+	</div>
+{%- endblock -%}

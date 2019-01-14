@@ -1,0 +1,98 @@
+{%- extends 'index.html' -%}
+{%- block head -%}{%- include 'head.html' -%}{%- block additional_css -%}{%- endblock -%}{%- endblock -%}
+{%- block body -%}
+	{%- if post -%}
+		<div class="post clearfix">
+			<div class="row">
+				<div class="col-lg-8">
+					<div class="page-header">
+						<h2>{{ post['incident_title'] | safe }}</h2>
+						<p>
+						<span class="icon-time">&nbsp;</span>
+            {%- if post['incident_reported'] -%}
+              Date Reported: {{ post['incident_reported'] | formatdate}}
+            {%- else -%}
+              Date Reported: None
+            {%- endif -%}
+						</p>
+						<p>
+						<span class="icon-time">&nbsp;</span>
+            {%- if post['initial_compromise'] -%}
+              Date Of Initial Compromise: {{ post['initial_compromise'] | formatdate }}
+            {%- else -%}
+              Date Of Initial Compromise: None
+            {%- endif -%}
+						</p>
+						<p>
+						<span class="icon-btc">&nbsp;</span>
+						Loss (Crypto): {{ post['loss_crypto'] }} 
+						</p>
+						<p>
+						<span class="icon-usd">&nbsp;</span>
+						Loss (USD): {{ post['loss_usd'] }} 
+						&nbsp;
+						<span class="glyphicon glyphicon-question-sign" 
+							data-toggle="popover" 
+							data-placement="right" 
+							data-content="Loss in USD value corresponding to crypto
+							price at time of attack">
+						</span>
+						</p>
+						<p>
+            Incident -> Categories : {{ post['incident_categories'] }} 
+						</p>
+						<p>
+						TTP -> Victim Targetting : {{ post['victim_targetting'] }}
+						</p>
+						<p>
+            TTP -> Attack Pattern Type @capec_id : {{ post['attack_pattern_type_capec_id'] }}
+						</p>
+						<p>
+            TTP -> Attack Pattern Type : {{ post['attack_pattern_type'] }}
+						</p>
+						<p>
+            Attributed Threat Actors -> Threat Actor Type -> Description (Geographical) : {{ post['description_geographical'] }}
+						</p>
+						<p>
+						References: {{ post['references'] }} 
+						</p>
+					</div>
+					<div class="content article">
+            <strong>Description</strong>
+						<p>
+						{{ post['incident_description'] | markdown }}
+						</p>
+						<!-- to include if we want to see authors -->
+						<!-- {{ post['author'] }} -->
+						</br>
+						<p>
+            {%- if post['date'] -%}
+							<em>Date Of Creation: {{ post['date'] | formatdate }}</em>
+            {%- else -%}
+							<em>Date Of Creation: None</em>
+            {%- endif -%}
+						</p>
+					</div>
+					<hr>
+					<div class="social row-fluid">
+            <!-- AddThis Button BEGIN -->
+						<div class="addthis_toolbox addthis_default_style addthis_16x16_style">
+							<a class="addthis_button_twitter"></a>
+							<a class="addthis_button_facebook"></a>
+							<a class="addthis_button_google_plusone_share"></a>
+							<a class="addthis_button_evernote"></a>
+							<a class="addthis_button_pocket"></a>
+						</div>
+						<script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=xa-526fe54e082798d3"></script>
+						<!-- AddThis Button END -->
+					</div>
+				</div>
+			</div>
+		</div>
+	{%- endif -%}
+	{%- include 'sidebar.html' -%}
+  <script src="{{ url_for('static', filename='js/lightbox-2.6.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/popover.js') }}"></script>
+	<link href="{{ url_for('static', filename='css/lightbox.css') }}" rel="stylesheet" media="screen">
+{%- endblock -%}
+

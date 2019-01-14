@@ -1,0 +1,11 @@
+{%- if recent_posts -%}
+<div class="col-lg-3 visible-lg sidebar">
+    <h2>Recent Incidents</h2>
+    <hr>
+    <ul>
+    {% for post in recent_posts %}
+        <li><a href="{{ url_for('single_post', permalink=post['permalink']) }}">{{ post['incident_title'] | safe }}</a></li>
+    {% endfor %}
+    </ul>
+</div>
+{%- endif -%}
