@@ -12,6 +12,8 @@ Developers can get this repository to your local "incidents" directory via git p
 $ mkdir incidents
 $ cd incidents
 $ git init
+$ git config user.email "<youremail@somewhere.com>"
+$ git config user.name "<github_username>"
 $ git remote add origin https://github.com/bcss-pm/incidents.git
 $ git fetch --all
 $ git pull origin master
@@ -92,11 +94,11 @@ Install this application's python packages
 To leave python environment:
 `deactivate`
 
-## Running the Web App
+## Running the Web App for the first time
 By default, the Web App uses mongodb from localhost, refer to the file `incidents/config.py`
 ```
 CONNECTION = pymongo.MongoClient(host = '127.0.0.1', 
-                                  port = 27017)
+                                 port = 27017)
 ```
 
 Go to incidents directory:
@@ -117,12 +119,105 @@ Copy the URL `http://0.0.0.0:5000/` to your local web browser.
 If this is first time you running the web app, your database is empty, you will also need to create a first login user with the details below:
 ![shell run3](screenshots/shell_run3.png?raw=true "Title")
 
-## Backing-up and Restoring database
 
+## Running the Web App with populated databse
+Once your mongodb is restored, the Blockchain Incidents Database would be populated.
+Below is a sample screenshot.
 ![shell run4](screenshots/shell_run4.png?raw=true "Title")
 
 
+## Backing-up and Restoring database
+Check backup and restore MongoDB
+https://stackoverflow.com/questions/31993168/cant-create-backup-mongodump-with-db-authentication-failed
+https://stackoverflow.com/questions/28640281/restoring-single-collection-in-an-existing-mongodb#
 
+### Backing up legacy database from AWS instance
+The legacy mongo database is stored inside a docker container running in AWS EC2 instance.
+
+Below are command line commands to explore the database inside docker:
+```sh
+ubuntu@ip-xxx:~$ docker ps
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                    NAMES
+544587f50deb        blocktest_web       "gunicorn -b :5000 w…"   6 weeks ago         Up 6 weeks          0.0.0.0:5000->5000/tcp   blocktest_web_1
+92259b90790a        mongo:3.6.1         "docker-entrypoint.s…"   5 months ago        Up 4 months         27017/tcp                blocktest_db_1
+
+
+ubuntu@ip-xxx:~$ docker exec -it blocktest_db_1 /bin/bash
+
+root@xxx:/# mongo admin -u tnoadmin -p '<password>'
+MongoDB shell version v3.6.1
+connecting to: mongodb://127.0.0.1:27017/admin
+MongoDB server version: 3.6.1
+Server has startup warnings:
+2018-08-28T19:45:14.463+0000 I STORAGE  [initandlisten]
+2018-08-28T19:45:14.463+0000 I STORAGE  [initandlisten] ** WARNING: Using the XFS filesystem is strongly recommended with the WiredTiger storage engine
+2018-08-28T19:45:14.463+0000 I STORAGE  [initandlisten] **          See http://dochub.mongodb.org/core/prodnotes-filesystem
+2018-08-28T19:45:15.276+0000 I CONTROL  [initandlisten]
+2018-08-28T19:45:15.276+0000 I CONTROL  [initandlisten] ** WARNING: /sys/kernel/mm/transparent_hugepage/enabled is 'always'.
+2018-08-28T19:45:15.276+0000 I CONTROL  [initandlisten] **        We suggest setting it to 'never'
+2018-08-28T19:45:15.276+0000 I CONTROL  [initandlisten]
+2018-08-28T19:45:15.277+0000 I CONTROL  [initandlisten] ** WARNING: /sys/kernel/mm/transparent_hugepage/defrag is 'always'.
+2018-08-28T19:45:15.277+0000 I CONTROL  [initandlisten] **        We suggest setting it to 'never'
+2018-08-28T19:45:15.277+0000 I CONTROL  [initandlisten]
+> show dbs
+admin   0.000GB
+blog    0.001GB
+config  0.000GB
+local   0.000GB
+> use blog
+switched to db blog
+> show collections
+posts
+settings
+users
+> db.getCollection('posts').find({}).limit(20)
+> exit
+bye
+root@xxx:/#
+root@xxx:/# exit
+exit
+ubuntu@ip-xxx:~$
+```
+
+Here are the steps to backup mongo database `blog` inside docker:
+```sh
+ubuntu@ip-xxx:~$ docker exec -it blocktest_db_1 mongodump -d blog -u tnoadmin -p '<password>' --authenticationDatabase admin
+ubuntu@ip-xxx:~$ pwd
+/home/ubuntu
+ubuntu@ip-xxx:~$ mkdir dumps
+ubuntu@ip-xxx:~$ cd dumps
+ubuntu@ip-xxx:~/dumps$ docker cp blocktest_db_1:dump/blog ./
+ubuntu@ip-xxx:~/dumps$ ls -l
+total 4
+drwxr-xr-x 2 ubuntu ubuntu 4096 Dec 28 06:29 blog
+```
+
+### Backing up local mongo database
+Typically you would want to backup your local development or test database before restoring from another dump.
+Here are the steps:
+```sh
+sebtno@ubuntu:~/dumps/local$ sudo mongodump --db blog --out dump02
+[sudo] password for sebtno: 
+2019-01-09T22:31:13.749-0800	writing blog.users to 
+2019-01-09T22:31:13.749-0800	writing blog.settings to 
+2019-01-09T22:31:13.749-0800	writing blog.posts to 
+2019-01-09T22:31:13.750-0800	done dumping blog.users (2 documents)
+2019-01-09T22:31:13.750-0800	done dumping blog.settings (1 document)
+2019-01-09T22:31:13.750-0800	done dumping blog.posts (1 document)
+```
+
+### Restoring a mongo database collection 'posts' from to local database
+The mongo `blog` database has a `posts` collection that contains all the incidents.
+Here are the steps to restore it into your local database, the example below restores from a directory called `aws/dumps`:
+```sh
+sebtno@ubuntu:~/dumps$ sudo mongorestore --db blog --collection posts aws/dumps/blog/posts.bson 
+2019-01-09T22:37:05.861-0800	checking for collection data in aws/dumps/blog/posts.bson
+2019-01-09T22:37:05.863-0800	reading metadata for blog.posts from aws/dumps/blog/posts.metadata.json
+2019-01-09T22:37:05.864-0800	restoring blog.posts from aws/dumps/blog/posts.bson
+2019-01-09T22:37:05.932-0800	restoring indexes for collection blog.posts from metadata
+2019-01-09T22:37:05.933-0800	finished restoring blog.posts (110 documents)
+2019-01-09T22:37:05.933-0800	done
+```
 
 
 
