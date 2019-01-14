@@ -48,9 +48,13 @@ Follow the installation steps from [Install MongoDB Community Edition on Ubuntu]
 **Be sure to follow the steps for Ubuntu 16.04** and not other versions.
 
 After installation, `mongod` should be started as a service. Check:
+
 `sudo service mongod status`
+
 `sudo systemctl enable mongod`
+
 `sudo service mongod restart`
+
 
 If you cannot start mongod, refer to this [post](https://askubuntu.com/questions/921753/failed-to-start-mongod-service-unit-mongod-service-not-found)
 
