@@ -1,7 +1,7 @@
 # Blockchain Incidents Database
 ## Background
-Blockchain Incidents Database is a web application for recording the incidents pertaining to various blockchains types e.g. Ethereum, Bitcoin an other Altcoins blockchain.
-This database model is based on [STIX](https://stixproject.github.io/) model, and in particular its [Incident](http://stixproject.github.io/documentation/idioms/simple-incident/) data type model.
+Blockchain Incidents Database is a web application for recording the incidents pertaining to various blockchains types e.g. Ethereum, Bitcoin an other Altcoins blockchains.
+The database model is based on [STIX](https://stixproject.github.io/) model, and in particular, its [Incident](http://stixproject.github.io/documentation/idioms/simple-incident/) data type model.
 
 ## Credits
 This web application was based on a blogging application from https://github.com/dmaslov/flask-blog
@@ -117,12 +117,14 @@ Note that the server is running on `http://0.0.0.0:5000/`
 Copy the URL `http://0.0.0.0:5000/` to your local web browser.
 
 If this is first time you running the web app, your database is empty, you will also need to create a first login user with the details below:
+
 ![shell run3](screenshots/shell_run3.png?raw=true "Title")
 
 
 ## Running the Web App with populated databse
 Once your mongodb is restored, the Blockchain Incidents Database would be populated.
 Below is a sample screenshot.
+
 ![shell run4](screenshots/shell_run4.png?raw=true "Title")
 
 
