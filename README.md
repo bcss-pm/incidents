@@ -1,7 +1,7 @@
 # Blockchain Incidents Database
 ## Background
-Blockchain Incidents Database is a web application for recording the incidents pertaining to various blockchains types e.g. Ethereum, Bitcoin an other Altcoins blockchain.
-This database model is based on [STIX](https://stixproject.github.io/) model, and in particular its [Incident](http://stixproject.github.io/documentation/idioms/simple-incident/) data type model.
+Blockchain Incidents Database is a web application for recording the incidents pertaining to various blockchains types e.g. Ethereum, Bitcoin an other Altcoins blockchains.
+The database model is based on [STIX](https://stixproject.github.io/) model, and in particular, its [Incident](http://stixproject.github.io/documentation/idioms/simple-incident/) data type model.
 
 ## Credits
 This web application was based on a blogging application from https://github.com/dmaslov/flask-blog
