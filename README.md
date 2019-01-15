@@ -1,6 +1,6 @@
 # Blockchain Incidents Database
 ## Background
-Blockchain Incidents Database is a web application for recording the incidents pertaining to various blockchains types e.g. Ethereum, Bitcoin an other Altcoins blockchains.
+Blockchain Incidents Database is a web application for recording the incidents pertaining to various blockchains types e.g. Ethereum, Bitcoin and other Altcoins blockchains.
 The database model is based on [STIX](https://stixproject.github.io/) model, and in particular, its [Incident](http://stixproject.github.io/documentation/idioms/simple-incident/) data type model.
 
 ## Credits
@@ -120,6 +120,9 @@ Note that the server is running on `http://0.0.0.0:5000/`
 
 Copy the URL `http://0.0.0.0:5000/` to your local web browser.
 
+### Creating the first login user
+**This step will be deprecated when User Management is removed from this Web App**
+
 If this is first time you running the web app, your database is empty, you will also need to create a first login user with the details below:
 
 ![shell run3](screenshots/shell_run3.png?raw=true "Title")
@@ -133,9 +136,11 @@ Below is a sample screenshot.
 
 
 ## Backing-up and Restoring database
-Check backup and restore MongoDB
-https://stackoverflow.com/questions/31993168/cant-create-backup-mongodump-with-db-authentication-failed
-https://stackoverflow.com/questions/28640281/restoring-single-collection-in-an-existing-mongodb#
+Backing and restoring databases will be a common best practice not only for developers, but also for DevOps.
+Below are some helpful links for MongoDB backup and restore.
+- [mongodump authentication failed](https://stackoverflow.com/questions/31993168/cant-create-backup-mongodump-with-db-authentication-failed)
+- [restore single collection](https://stackoverflow.com/questions/28640281/restoring-single-collection-in-an-existing-mongodb#)
+
 
 ### Backing up legacy database from AWS instance
 The legacy mongo database is stored inside a docker container running in AWS EC2 instance.
