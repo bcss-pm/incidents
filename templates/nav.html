@@ -20,7 +20,7 @@
       {% if session['user']['super'] %}
 			<li><a href="{{ url_for('blog_settings') }}">Settings</a></li>
       {% endif %}
-			<!--<li><a href="{{ url_for('logout') }}">Logout</a></li>-->
+			<li><a href="{{ url_for('logout') }}">Logout</a></li>
 		{% endif %}
       <!-- Comment out RSS feed
 			<li><a href="{{ url_for('recent_feed') }}" class="icon-rss"></a></li>
