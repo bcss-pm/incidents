@@ -128,7 +128,7 @@ If this is first time you running the web app, your database is empty, you will 
 ![shell run3](screenshots/shell_run3.png?raw=true "Title")
 
 
-## Running the Web App with populated databse
+## Running the Web App with populated database
 Once your mongodb is restored, the Blockchain Incidents Database would be populated.
 Below is a sample screenshot.
 
