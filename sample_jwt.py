@@ -1,6 +1,8 @@
-# Refer to https://flask-jwt-extended.readthedocs.io/en/latest/
-# Tested with curl on Linux
-# Tested with postman on Windows, remmber to use %YOUR_ENV_NAME% instead of $YOUR_ENV_NAME
+# Author: Sebastian Ma <sebmalikkeung@gmail.com>
+# Description: 
+# A basic JWT program, refer to https://flask-jwt-extended.readthedocs.io/en/latest/
+# Tested with curl on Linux. Tested with postman on Windows.
+# On Windows, remember to use %YOUR_ENV_NAME% instead of $YOUR_ENV_NAME.
 from flask import Flask, jsonify, request
 from flask_jwt_extended import (
     JWTManager, jwt_required, create_access_token,
