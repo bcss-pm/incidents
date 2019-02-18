@@ -59,7 +59,7 @@ def data():
 
 
 @app.route('/analytics')
-#@login_required()
+@login_required()
 def analytics():
     """
     Analytics for database
@@ -73,7 +73,7 @@ def analytics():
 
 @app.route('/tag/<tag>', defaults={'page': 1})
 @app.route('/tag/<tag>/page-<int:page>')
-#@login_required()
+@login_required()
 def posts_by_tag(tag, page):
     skip = (page - 1) * int(app.config['PER_PAGE'])
     posts = postClass.get_posts(int(app.config['PER_PAGE']), skip, tag=tag)
@@ -100,7 +100,7 @@ def single_post(permalink):
 
 @app.route('/q/<query>', defaults={'page': 1})
 @app.route('/q/<query>/page-<int:page>')
-#@login_required()
+@login_required()
 def search_results(page, query):
     skip = (page - 1) * int(app.config['PER_PAGE'])
     if query:
@@ -118,7 +118,7 @@ def search_results(page, query):
 
 
 @app.route('/search', methods=['GET', 'POST'])
-#@login_required()
+@login_required()
 def search():
     if request.method != 'POST':
         return redirect(url_for('index'))
@@ -131,7 +131,7 @@ def search():
 
 
 @app.route('/new_incident', methods=['GET', 'POST'])
-#@login_required()
+@login_required()
 def new_post():
     """
     Stores the post data from /new_incident into MongoDB
@@ -293,7 +293,7 @@ def new_post():
 
 
 @app.route('/incident_preview')
-#@login_required()
+@login_required()
 def post_preview():
     post = session.get('post-preview')
     return render_template('preview.html',
@@ -326,7 +326,7 @@ def posts(page):
 
 @app.route('/incidents_list/usd/ascending', defaults={'page': 1})
 @app.route('/incidents_list/usd/ascending/page-<int:page>')
-#@login_required()
+@login_required()
 def posts_usd_ascending(page):
     """
     List incidents based on the amount of USD lost
@@ -348,7 +348,7 @@ def posts_usd_ascending(page):
 
 @app.route('/incidents_list/usd/descending', defaults={'page': 1})
 @app.route('/incidents_list/usd/descending/page-<int:page>')
-#@login_required()
+@login_required()
 def posts_usd_descending(page):
     """
     List incidents based on the amount of USD lost
@@ -370,7 +370,7 @@ def posts_usd_descending(page):
 
 @app.route('/incidents_list/title/ascending', defaults={'page': 1})
 @app.route('/incidents_list/title/ascending/page-<int:page>')
-#@login_required()
+@login_required()
 def posts_title_ascending(page):
     """
     List incidents based on name
@@ -392,7 +392,7 @@ def posts_title_ascending(page):
 
 @app.route('/incidents_list/title/descending', defaults={'page': 1})
 @app.route('/incidents_list/title/descending/page-<int:page>')
-#@login_required()
+@login_required()
 def posts_title_descending(page):
     """
     List incidents based on name
@@ -414,7 +414,7 @@ def posts_title_descending(page):
 
 @app.route('/incidents_list/category/ascending', defaults={'page': 1})
 @app.route('/incidents_list/category/ascending/page-<int:page>')
-#@login_required()
+@login_required()
 def posts_category_ascending(page):
     """
     List incidents based on name
@@ -436,7 +436,7 @@ def posts_category_ascending(page):
 
 @app.route('/incidents_list/category/descending', defaults={'page': 1})
 @app.route('/incidents_list/category/descending/page-<int:page>')
-#@login_required()
+@login_required()
 def posts_category_descending(page):
     """
     List incidents based on name
@@ -458,7 +458,7 @@ def posts_category_descending(page):
 
 @app.route('/incidents_list/date_reported/ascending', defaults={'page': 1})
 @app.route('/incidents_list/date_reported/ascending/page-<int:page>')
-#@login_required()
+@login_required()
 def posts_date_reported_ascending(page):
     """
     List incidents based on name
@@ -480,7 +480,7 @@ def posts_date_reported_ascending(page):
 
 @app.route('/incidents_list/date_reported/descending', defaults={'page': 1})
 @app.route('/incidents_list/date_reported/descending/page-<int:page>')
-#@login_required()
+@login_required()
 def posts_date_reported_descending(page):
     """
     List incidents based on name
@@ -501,7 +501,7 @@ def posts_date_reported_descending(page):
 
 
 @app.route('/incident_edit?id=<id>')
-#@login_required()
+@login_required()
 def post_edit(id):
     post = postClass.get_post_by_id(id)
     if post['error']:
@@ -520,7 +520,7 @@ def post_edit(id):
 
 
 @app.route('/incident_delete?id=<id>')
-#@login_required()
+@login_required()
 def post_del(id):
     response = postClass.delete_post(id)
     if response['data'] is True:
@@ -664,7 +664,7 @@ def recent_feed():
 
 
 @app.route('/settings', methods=['GET', 'POST'])
-#@login_required()
+@login_required()
 @superuser()
 def blog_settings():
     error = None

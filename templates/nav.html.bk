@@ -12,18 +12,36 @@
 	</div>
 	<div class="navbar-collapse collapse" id="navbar-main">
 		<ul class="nav navbar-nav">
-
+<!--
+		{% if session.user %}
+-->
 			<li><a href="{{ url_for('posts') }}">Incidents</a></li>
 			<li><a href="{{ url_for('analytics') }}">Analytics</a></li>
 			<li><a href="{{ url_for('new_post') }}">New Incident</a></li>
-
+<!--
+			<li><a href="{{ url_for('users_list') }}">Users</a></li>
+      {% if session['user']['super'] %}
+			<li><a href="{{ url_for('blog_settings') }}">Settings</a></li>
+      {% endif %}
+-->
+<!--
+			<li><a href="{{ url_for('logout') }}">Logout</a></li>
+		{% endif %}
+-->
+      <!-- Comment out RSS feed
+			<li><a href="{{ url_for('recent_feed') }}" class="icon-rss"></a></li>
+      -->
 		</ul>
-
+<!--
+		{% if session.user %}
+-->
 		<form class="navbar-form navbar-right search-form" method="post" action="{{ url_for('search') }}">
             <input type="text" name="query" class="form-control col-lg-8" placeholder="Search">
 			<input name="_csrf_token" type="hidden" value="{{ csrf_token() }}">
 		</form>
-
+<!--
+		{% endif %}
+-->
 	</div>
 </div>
 
