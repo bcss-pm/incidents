@@ -3,6 +3,7 @@
 # A basic JWT program, refer to https://flask-jwt-extended.readthedocs.io/en/latest/
 # Tested with curl on Linux. Tested with postman on Windows.
 # On Windows, remember to use %YOUR_ENV_NAME% instead of $YOUR_ENV_NAME.
+# To debug, use https://jwt.io/
 from flask import Flask, jsonify, request
 from flask_jwt_extended import (
     JWTManager, jwt_required, create_access_token,
@@ -26,16 +27,19 @@ def login():
         return jsonify({"msg": "Missing JSON in request"}), 400
 
     username = request.json.get('username', None)
-    password = request.json.get('password', None)
-    print(username)
-    print(password)
+    #password = request.json.get('password', None)
+    #print(username)
+    #print(password)
     if not username:
         return jsonify({"msg": "Missing username parameter"}), 400
-    if not password:
-        return jsonify({"msg": "Missing password parameter"}), 400
+    #if not password:
+    #    return jsonify({"msg": "Missing password parameter"}), 400
 
-    if username != 'test' or password != 'test':
-        return jsonify({"msg": "Bad username or password"}), 401
+    #if username != 'test' or password != 'test':
+    #    return jsonify({"msg": "Bad username or password"}), 401
+
+    if username != "admin" and username != "user":
+        return jsonify({"msg": "Bad username"}), 401
 
     # Identity can be any data that is json serializable
     access_token = create_access_token(identity=username)
@@ -44,6 +48,10 @@ def login():
 
 # Protect a view with jwt_required, which requires a valid access token
 # in the request to access.
+# $ curl http://localhost:5005/protected -> {"msg": "Missing Authorization Header"}
+# $ curl -H "Content-Type: application/json" -X POST -d '{"username":"admin"}' http://localhost:5005/login -> {"jwt":"...the token..."}
+# $ export JWT_ADMIN="..the token..."
+# $ curl -H "Authorization: Bearer $JWT_ADMIN" http://localhost:5005/protected -> {"logged_in_as":"admin"}
 @app.route('/protected', methods=['GET'])
 @jwt_required
 def protected():
@@ -57,6 +65,6 @@ def hello():
     return jsonify({"msg": "Guten Tag!"}), 200
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=5005)
     #app.run(host="0.0.0.0")
 
