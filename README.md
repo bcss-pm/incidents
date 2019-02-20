@@ -230,7 +230,7 @@ sebtno@ubuntu:~/dumps$ sudo mongorestore --db blog --collection posts aws/dumps/
 2019-01-09T22:37:05.933-0800	done
 ```
 
-## Gurnicon the Web App
+## Gunicorn the Web App
 
 Install gurnicon:
 ```sh
