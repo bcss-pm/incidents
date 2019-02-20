@@ -230,6 +230,30 @@ sebtno@ubuntu:~/dumps$ sudo mongorestore --db blog --collection posts aws/dumps/
 2019-01-09T22:37:05.933-0800	done
 ```
 
+## Gurnicon the Web App
+
+Install gurnicon:
+```sh
+sudo apt-get update
+sudo apt-get install gunicorn
+```
+
+Go to the app root directory to start your web app via gunicorn:
+```sh
+~/github/incidents$ source ./env/bin/activate
+(env) ~/github/incidents$ gunicorn -b :5000 web:app
+```
+
+To re-load your gunicorn web app:
+```sh
+$ ps aux|grep gunicorn
+sebtno     5287  0.0  0.2  60108 22080 pts/17   S+   22:07   0:00 /home/sebtno/github/blocktest/env/bin/python3 /home/sebtno/github/blocktest/env/bin/gunicorn -b :5000 web:app
+sebtno     5290  0.1  0.4 251704 32896 pts/17   Sl+  22:07   0:00 /home/sebtno/github/blocktest/env/bin/python3 /home/sebtno/github/blocktest/env/bin/gunicorn -b :5000 web:app
+sebtno     5346  0.0  0.0  14224   924 pts/4    S+   22:14   0:00 grep --color=auto gunicorn
+
+$ kill -HUP 5287
+```
+
 
 
 
